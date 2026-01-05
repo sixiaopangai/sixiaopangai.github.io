@@ -4,6 +4,39 @@
   
   
   <entry>
+    <title>从零到一：在 Acer Predator 上搭建并部署 Hexo (Fluid) 动态博客</title>
+    <link href="/2026/01/05/Hexo-Fluid-Deployment-Guide/"/>
+    <url>/2026/01/05/Hexo-Fluid-Deployment-Guide/</url>
+    
+    <content type="html"><![CDATA[<h2 id="0-前言"><a href="#0-前言" class="headerlink" title="0. 前言"></a>0. 前言</h2><p>作为一名专注于全栈开发（Java&#x2F;Vue.js&#x2F;Three.js）的学习者，搭建一个属于自己的博客是记录成长的第一步。本文记录了我在 <strong>Acer Predator PHN16-71</strong> 笔记本上搭建 Hexo 博客并实现动态粒子背景的全过程。</p><hr><h2 id="1-环境准备与-Hexo-初始化"><a href="#1-环境准备与-Hexo-初始化" class="headerlink" title="1. 环境准备与 Hexo 初始化"></a>1. 环境准备与 Hexo 初始化</h2><p>首先，确保本地安装了 Node.js 环境。</p><ul><li><strong>进入项目目录</strong>：Hexo 的指令必须在包含 <code>_config.yml</code> 的根目录下执行。例如我的路径是 <code>F:\workspace\Hexo-Blog\lhyblog</code>。</li><li><strong>常用指令</strong>：<ul><li><code>hexo clean</code>：清理缓存。</li><li><code>hexo g</code> (generate)：生成静态文件。</li><li><code>hexo s</code> (server)：本地预览（访问 <code>http://localhost:4000</code>）。</li></ul></li></ul><blockquote><p><strong>避坑指南</strong>：在 Windows PowerShell 中，如果连续执行指令建议使用分号 <code>;</code>（如 <code>hexo cl ; hexo g</code>），因为旧版 PowerShell 不支持 <code>&amp;&amp;</code>。</p></blockquote><hr><h2 id="2-Fluid-主题配置与避坑"><a href="#2-Fluid-主题配置与避坑" class="headerlink" title="2. Fluid 主题配置与避坑"></a>2. Fluid 主题配置与避坑</h2><p>我选择了极简且美观的 <strong>Fluid</strong> 主题。</p><h3 id="修复弃用警告"><a href="#修复弃用警告" class="headerlink" title="修复弃用警告"></a>修复弃用警告</h3><p>在配置过程中，遇到了 <code>banner_parallax</code> 的警告。</p><ul><li><strong>修正方法</strong>：将 <code>_config.fluid.yml</code> 中的配置项从 <code>banner_parallax: true</code> 修改为嵌套格式：</li></ul><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">banner:</span><br>  <span class="hljs-attr">parallax:</span> <span class="hljs-literal">true</span><br></code></pre></td></tr></table></figure><hr><h2 id="3-极客进阶：注入-Three-js-动态粒子背景"><a href="#3-极客进阶：注入-Three-js-动态粒子背景" class="headerlink" title="3. 极客进阶：注入 Three.js 动态粒子背景"></a>3. 极客进阶：注入 Three.js 动态粒子背景</h2><p>为了体现对 3D 图形的兴趣，我为博客添加了随着鼠标律动的动态背景。</p><h3 id="编写脚本"><a href="#编写脚本" class="headerlink" title="编写脚本"></a>编写脚本</h3><p>在 <code>source/js/</code> 下创建 <code>particle-bg.js</code>，使用 Three.js 构建粒子系统。</p><h3 id="注入主题"><a href="#注入主题" class="headerlink" title="注入主题"></a>注入主题</h3><p>在 <code>_config.fluid.yml</code> 末尾添加：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">custom_js:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">//cdn.bootcdn.net/ajax/libs/three.js/r128/three.min.js</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">/js/particle-bg.js</span><br></code></pre></td></tr></table></figure><h3 id="PC端与移动端适配"><a href="#PC端与移动端适配" class="headerlink" title="PC端与移动端适配"></a>PC端与移动端适配</h3><p>为了兼顾性能和用户体验：</p><ul><li><strong>PC端</strong>：运行动态粒子效果</li><li><strong>移动端</strong>：显示静态 Banner 图片，节省性能</li></ul><hr><h2 id="4-部署至-GitHub-Pages-与-Cloudflare"><a href="#4-部署至-GitHub-Pages-与-Cloudflare" class="headerlink" title="4. 部署至 GitHub Pages 与 Cloudflare"></a>4. 部署至 GitHub Pages 与 Cloudflare</h2><p>为了让所有人都能访问，我采用了 GitHub Pages + Cloudflare 的组合方案。</p><h3 id="仓库设置"><a href="#仓库设置" class="headerlink" title="仓库设置"></a>仓库设置</h3><ol><li>创建名为 <code>sixiaopangai.github.io</code> 的特殊公开仓库。</li><li><strong>CNAME 保护</strong>：在 <code>source/</code> 目录下创建 <code>CNAME</code> 文件，填入自定义域名 <code>blog.yushenchuanmei.top</code>。</li></ol><h3 id="部署流程"><a href="#部署流程" class="headerlink" title="部署流程"></a>部署流程</h3><ol><li><strong>安装插件</strong>：<code>npm install hexo-deployer-git --save</code></li><li><strong>执行发布</strong>：<code>hexo clean &amp;&amp; hexo g &amp;&amp; hexo d</code></li><li><strong>DNS 接入</strong>：在 Cloudflare 中将 <code>blog</code> 子域名以 CNAME 方式指向 GitHub 地址，并开启小橙云代理。</li></ol><hr><h2 id="5-源码备份：安全感来源"><a href="#5-源码备份：安全感来源" class="headerlink" title="5. 源码备份：安全感来源"></a>5. 源码备份：安全感来源</h2><p>部署后的静态 HTML 只是成果，真正的财富是 Markdown 源码。我将整个 <code>lhyblog</code> 文件夹推送到一个名为 <code>hexo-blog-source</code> 的<strong>私有仓库</strong>中。</p><h3 id="两个仓库的区别"><a href="#两个仓库的区别" class="headerlink" title="两个仓库的区别"></a>两个仓库的区别</h3><table><thead><tr><th>仓库</th><th>类型</th><th>内容</th></tr></thead><tbody><tr><td><code>sixiaopangai.github.io</code></td><td>公开</td><td>生成的静态网站（HTML&#x2F;CSS&#x2F;JS）</td></tr><tr><td><code>hexo-blog-source</code></td><td>私有</td><td>源代码（配置文件、Markdown 原文）</td></tr></tbody></table><h3 id="备份指令"><a href="#备份指令" class="headerlink" title="备份指令"></a>备份指令</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">git add .<br>git commit -m <span class="hljs-string">&quot;feat: 备份博客源代码，包含动态背景配置&quot;</span><br>git push -u origin main<br></code></pre></td></tr></table></figure><hr><h2 id="6-结语"><a href="#6-结语" class="headerlink" title="6. 结语"></a>6. 结语</h2><p>目前博客已成功上线：<a href="https://blog.yushenchuanmei.top/">blog.yushenchuanmei.top</a></p><p>接下来的重心将回归到 <strong>Java 学生管理系统</strong> 的学习开发，输出是最好的输入，共勉！</p><hr><blockquote><p>📝 <strong>本文作者</strong>：sixiaopangai<br>🔗 <strong>博客地址</strong>：<a href="https://sixiaopangai.github.io/">https://sixiaopangai.github.io</a></p></blockquote>]]></content>
+    
+    
+    <categories>
+      
+      <category>技术笔记</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Hexo</tag>
+      
+      <tag>Blog</tag>
+      
+      <tag>Three.js</tag>
+      
+      <tag>GitHub Pages</tag>
+      
+      <tag>Cloudflare</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>Hello World</title>
     <link href="/2025/12/31/hello-world/"/>
     <url>/2025/12/31/hello-world/</url>
