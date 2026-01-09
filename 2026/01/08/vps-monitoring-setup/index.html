@@ -19,28 +19,25 @@
   <meta name="author" content="sixiaopangai">
   <meta name="keywords" content="">
   
-    <meta name="description" content="0. 前言作为一名专注于全栈开发（Java&#x2F;Vue.js&#x2F;Three.js）的学习者，搭建一个属于自己的博客是记录成长的第一步。本文记录了我在 Acer Predator PHN16-71 笔记本上搭建 Hexo 博客并实现动态粒子背景的全过程。  1. 环境准备与 Hexo 初始化首先，确保本地安装了 Node.js 环境。  进入项目目录：Hexo 的指令必须在包含 _co">
+    <meta name="description" content="0. 序言：为什么我们需要”运维闭环”？对于计算机专业的学生来说，买一台 VPS 挂个脚本只是开始。真正的挑战在于：当服务挂掉时，你是否能比用户更早知道？ 本周，我利用我的 Acer Predator Helios Neo 16 (PHN16-71) 远程对洛杉矶 VPS 进行了全面改造，构建了一个集”服务部署、安全加密、实时监控、自动告警”于一体的运维闭环，确保我的”梯子”与”博客”始终处于可视">
 <meta property="og:type" content="article">
-<meta property="og:title" content="从零到一：在 Acer Predator 上搭建并部署 Hexo (Fluid) 动态博客">
-<meta property="og:url" content="https://sixiaopangai.github.io/2026/01/05/Hexo-Fluid-Deployment-Guide/index.html">
+<meta property="og:title" content="从零到一：构建高可用的 VPS 运维与监控闭环全纪录">
+<meta property="og:url" content="https://sixiaopangai.github.io/2026/01/08/vps-monitoring-setup/index.html">
 <meta property="og:site_name" content="lhy的个人博客">
-<meta property="og:description" content="0. 前言作为一名专注于全栈开发（Java&#x2F;Vue.js&#x2F;Three.js）的学习者，搭建一个属于自己的博客是记录成长的第一步。本文记录了我在 Acer Predator PHN16-71 笔记本上搭建 Hexo 博客并实现动态粒子背景的全过程。  1. 环境准备与 Hexo 初始化首先，确保本地安装了 Node.js 环境。  进入项目目录：Hexo 的指令必须在包含 _co">
+<meta property="og:description" content="0. 序言：为什么我们需要”运维闭环”？对于计算机专业的学生来说，买一台 VPS 挂个脚本只是开始。真正的挑战在于：当服务挂掉时，你是否能比用户更早知道？ 本周，我利用我的 Acer Predator Helios Neo 16 (PHN16-71) 远程对洛杉矶 VPS 进行了全面改造，构建了一个集”服务部署、安全加密、实时监控、自动告警”于一体的运维闭环，确保我的”梯子”与”博客”始终处于可视">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://sixiaopangai.github.io/img/my-threejs-banner.png">
-<meta property="article:published_time" content="2026-01-05T15:00:00.000Z">
-<meta property="article:modified_time" content="2026-01-05T15:30:21.093Z">
+<meta property="article:published_time" content="2026-01-08T15:30:00.000Z">
+<meta property="article:modified_time" content="2026-01-09T08:11:31.470Z">
 <meta property="article:author" content="sixiaopangai">
-<meta property="article:tag" content="Blog">
-<meta property="article:tag" content="Cloudflare">
-<meta property="article:tag" content="GitHub Pages">
-<meta property="article:tag" content="Hexo">
-<meta property="article:tag" content="Three.js">
+<meta property="article:tag" content="Docker">
+<meta property="article:tag" content="Nginx">
+<meta property="article:tag" content="VPS">
+<meta property="article:tag" content="运维">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://sixiaopangai.github.io/img/my-threejs-banner.png">
   
   
   
-  <title>从零到一：在 Acer Predator 上搭建并部署 Hexo (Fluid) 动态博客 - lhy的个人博客</title>
+  <title>从零到一：构建高可用的 VPS 运维与监控闭环全纪录 - lhy的个人博客</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -206,7 +203,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="从零到一：在 Acer Predator 上搭建并部署 Hexo (Fluid) 动态博客"></span>
+            <span id="subtitle" data-typed-text="从零到一：构建高可用的 VPS 运维与监控闭环全纪录"></span>
           
         </div>
 
@@ -217,8 +214,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2026-01-05 23:00" pubdate>
-          2026年1月5日 晚上
+        <time datetime="2026-01-08 23:30" pubdate>
+          2026年1月8日 晚上
         </time>
       </span>
     
@@ -229,7 +226,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          693 字
+          854 字
         
       </span>
     
@@ -240,7 +237,7 @@
         
         
         
-          6 分钟
+          8 分钟
         
       </span>
     
@@ -277,86 +274,81 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">从零到一：在 Acer Predator 上搭建并部署 Hexo (Fluid) 动态博客</h1>
+            <h1 id="seo-header">从零到一：构建高可用的 VPS 运维与监控闭环全纪录</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="0-前言"><a href="#0-前言" class="headerlink" title="0. 前言"></a>0. 前言</h2><p>作为一名专注于全栈开发（Java&#x2F;Vue.js&#x2F;Three.js）的学习者，搭建一个属于自己的博客是记录成长的第一步。本文记录了我在 <strong>Acer Predator PHN16-71</strong> 笔记本上搭建 Hexo 博客并实现动态粒子背景的全过程。</p>
+                <h2 id="0-序言：为什么我们需要”运维闭环”？"><a href="#0-序言：为什么我们需要”运维闭环”？" class="headerlink" title="0. 序言：为什么我们需要”运维闭环”？"></a>0. 序言：为什么我们需要”运维闭环”？</h2><p>对于计算机专业的学生来说，买一台 VPS 挂个脚本只是开始。真正的挑战在于：<strong>当服务挂掉时，你是否能比用户更早知道？</strong></p>
+<p>本周，我利用我的 <strong>Acer Predator Helios Neo 16</strong> (PHN16-71) 远程对洛杉矶 VPS 进行了全面改造，构建了一个集”服务部署、安全加密、实时监控、自动告警”于一体的运维闭环，确保我的”梯子”与”博客”始终处于可视化的监控之下。</p>
 <hr>
-<h2 id="1-环境准备与-Hexo-初始化"><a href="#1-环境准备与-Hexo-初始化" class="headerlink" title="1. 环境准备与 Hexo 初始化"></a>1. 环境准备与 Hexo 初始化</h2><p>首先，确保本地安装了 Node.js 环境。</p>
+<h2 id="1-基础设施：Nginx-官方主线版的”非典型”部署"><a href="#1-基础设施：Nginx-官方主线版的”非典型”部署" class="headerlink" title="1. 基础设施：Nginx 官方主线版的”非典型”部署"></a>1. 基础设施：Nginx 官方主线版的”非典型”部署</h2><p>为了追求极致性能，我选择了最新的 <strong>Nginx Mainline (1.29.4)</strong>。在部署反向代理时，遇到了第一个实战坑：</p>
 <ul>
-<li><strong>进入项目目录</strong>：Hexo 的指令必须在包含 <code>_config.yml</code> 的根目录下执行。例如我的路径是 <code>F:\workspace\Hexo-Blog\lhyblog</code>。</li>
-<li><strong>常用指令</strong>：<ul>
-<li><code>hexo clean</code>：清理缓存。</li>
-<li><code>hexo g</code> (generate)：生成静态文件。</li>
-<li><code>hexo s</code> (server)：本地预览（访问 <code>http://localhost:4000</code>）。</li>
+<li><strong>挑战</strong>：习惯了 Ubuntu 仓库版 Nginx 的 <code>sites-available</code> 结构，但官方主线版默认路径为 <code>/etc/nginx/conf.d/</code>。</li>
+<li><strong>对策</strong>：摒弃软链接，直接在 <code>conf.d</code> 下创建 <code>status.conf</code>。</li>
+<li><strong>核心逻辑</strong>：通过 <code>proxy_pass http://localhost:3001;</code> 将流量精准导向后端的 Uptime Kuma。</li>
 </ul>
-</li>
-</ul>
-<blockquote>
-<p><strong>避坑指南</strong>：在 Windows PowerShell 中，如果连续执行指令建议使用分号 <code>;</code>（如 <code>hexo cl ; hexo g</code>），因为旧版 PowerShell 不支持 <code>&amp;&amp;</code>。</p>
-</blockquote>
 <hr>
-<h2 id="2-Fluid-主题配置与避坑"><a href="#2-Fluid-主题配置与避坑" class="headerlink" title="2. Fluid 主题配置与避坑"></a>2. Fluid 主题配置与避坑</h2><p>我选择了极简且美观的 <strong>Fluid</strong> 主题。</p>
-<h3 id="修复弃用警告"><a href="#修复弃用警告" class="headerlink" title="修复弃用警告"></a>修复弃用警告</h3><p>在配置过程中，遇到了 <code>banner_parallax</code> 的警告。</p>
+<h2 id="2-安全加固：自动化证书与”小绿锁”"><a href="#2-安全加固：自动化证书与”小绿锁”" class="headerlink" title="2. 安全加固：自动化证书与”小绿锁”"></a>2. 安全加固：自动化证书与”小绿锁”</h2><p>在互联网裸奔是危险的。我使用了 <strong>Certbot</strong> 为 <code>status.yushenchuanmei.top</code> 部署了 SSL 证书。</p>
 <ul>
-<li><strong>修正方法</strong>：将 <code>_config.fluid.yml</code> 中的配置项从 <code>banner_parallax: true</code> 修改为嵌套格式：</li>
+<li><strong>自动化</strong>：Certbot 不仅完成了挑战验证，还自动修改了 Nginx 配置文件，实现了 HTTP 到 HTTPS 的强制跳转。</li>
+<li><strong>续期保障</strong>：通过 <code>certbot.timer</code>，系统会在到期前 30 天自动完成续期，实现真正的”一次配置，永久生效”。</li>
 </ul>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">banner:</span><br>  <span class="hljs-attr">parallax:</span> <span class="hljs-literal">true</span><br></code></pre></td></tr></table></figure>
+<hr>
+<h2 id="3-监控中枢：基于-Docker-的-Uptime-Kuma"><a href="#3-监控中枢：基于-Docker-的-Uptime-Kuma" class="headerlink" title="3. 监控中枢：基于 Docker 的 Uptime Kuma"></a>3. 监控中枢：基于 Docker 的 Uptime Kuma</h2><p>为了不污染系统环境，我选择用 <strong>Docker</strong> 部署监控引擎：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker run -d --restart=always -p 3001:3001 -v uptime-kuma:/app/data --name uptime-kuma louislam/uptime-kuma:1<br></code></pre></td></tr></table></figure>
 
+<p>这台”望远镜”被我指向了四个关键维度，实现了从底层硬件到上层应用的全链路监测。</p>
 <hr>
-<h2 id="3-极客进阶：注入-Three-js-动态粒子背景"><a href="#3-极客进阶：注入-Three-js-动态粒子背景" class="headerlink" title="3. 极客进阶：注入 Three.js 动态粒子背景"></a>3. 极客进阶：注入 Three.js 动态粒子背景</h2><p>为了体现对 3D 图形的兴趣，我为博客添加了随着鼠标律动的动态背景。</p>
-<h3 id="编写脚本"><a href="#编写脚本" class="headerlink" title="编写脚本"></a>编写脚本</h3><p>在 <code>source/js/</code> 下创建 <code>particle-bg.js</code>，使用 Three.js 构建粒子系统。</p>
-<h3 id="注入主题"><a href="#注入主题" class="headerlink" title="注入主题"></a>注入主题</h3><p>在 <code>_config.fluid.yml</code> 末尾添加：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">custom_js:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">//cdn.bootcdn.net/ajax/libs/three.js/r128/three.min.js</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">/js/particle-bg.js</span><br></code></pre></td></tr></table></figure>
-
-<h3 id="PC端与移动端适配"><a href="#PC端与移动端适配" class="headerlink" title="PC端与移动端适配"></a>PC端与移动端适配</h3><p>为了兼顾性能和用户体验：</p>
+<h2 id="4-告警闭环：Telegram-Bot-的深度调试"><a href="#4-告警闭环：Telegram-Bot-的深度调试" class="headerlink" title="4. 告警闭环：Telegram Bot 的深度调试"></a>4. 告警闭环：Telegram Bot 的深度调试</h2><p>监控如果没有告警，就失去了意义。我开发了一个名为 <strong>“宇神”</strong> 的 Telegram 机器人。</p>
 <ul>
-<li><strong>PC端</strong>：运行动态粒子效果</li>
-<li><strong>移动端</strong>：显示静态 Banner 图片，节省性能</li>
+<li><strong>技术痛点</strong>：初始调用 <code>getUpdates</code> 接口时返回 <code>{&quot;ok&quot;:true,&quot;result&quot;:[]}</code>。</li>
+<li><strong>经验沉淀</strong>：意识到 API 的被动触发机制——必须先由用户向机器人发送指令激活对话，服务器才能抓取到 Chat ID。</li>
+<li><strong>最终效果</strong>：现在无论我身在何处，只要服务发生抖动，我的手机会在 10 秒内收到机器人的”求救信号”。</li>
 </ul>
 <hr>
-<h2 id="4-部署至-GitHub-Pages-与-Cloudflare"><a href="#4-部署至-GitHub-Pages-与-Cloudflare" class="headerlink" title="4. 部署至 GitHub Pages 与 Cloudflare"></a>4. 部署至 GitHub Pages 与 Cloudflare</h2><p>为了让所有人都能访问，我采用了 GitHub Pages + Cloudflare 的组合方案。</p>
-<h3 id="仓库设置"><a href="#仓库设置" class="headerlink" title="仓库设置"></a>仓库设置</h3><ol>
-<li>创建名为 <code>sixiaopangai.github.io</code> 的特殊公开仓库。</li>
-<li><strong>CNAME 保护</strong>：在 <code>source/</code> 目录下创建 <code>CNAME</code> 文件，填入自定义域名 <code>blog.yushenchuanmei.top</code>。</li>
-</ol>
-<h3 id="部署流程"><a href="#部署流程" class="headerlink" title="部署流程"></a>部署流程</h3><ol>
-<li><strong>安装插件</strong>：<code>npm install hexo-deployer-git --save</code></li>
-<li><strong>执行发布</strong>：<code>hexo clean &amp;&amp; hexo g &amp;&amp; hexo d</code></li>
-<li><strong>DNS 接入</strong>：在 Cloudflare 中将 <code>blog</code> 子域名以 CNAME 方式指向 GitHub 地址，并开启小橙云代理。</li>
-</ol>
-<hr>
-<h2 id="5-源码备份：安全感来源"><a href="#5-源码备份：安全感来源" class="headerlink" title="5. 源码备份：安全感来源"></a>5. 源码备份：安全感来源</h2><p>部署后的静态 HTML 只是成果，真正的财富是 Markdown 源码。我将整个 <code>lhyblog</code> 文件夹推送到一个名为 <code>hexo-blog-source</code> 的<strong>私有仓库</strong>中。</p>
-<h3 id="两个仓库的区别"><a href="#两个仓库的区别" class="headerlink" title="两个仓库的区别"></a>两个仓库的区别</h3><table>
+<h2 id="5-成果展示：多维度可视化监控大屏"><a href="#5-成果展示：多维度可视化监控大屏" class="headerlink" title="5. 成果展示：多维度可视化监控大屏"></a>5. 成果展示：多维度可视化监控大屏</h2><p>目前，我的个人运维看板已正式进入”完全体”状态。监控矩阵包括：</p>
+<table>
 <thead>
 <tr>
-<th>仓库</th>
-<th>类型</th>
-<th>内容</th>
+<th align="left">监控项目</th>
+<th align="left">监控方式</th>
+<th align="left">说明</th>
 </tr>
 </thead>
 <tbody><tr>
-<td><code>sixiaopangai.github.io</code></td>
-<td>公开</td>
-<td>生成的静态网站（HTML&#x2F;CSS&#x2F;JS）</td>
+<td align="left"><strong>洛杉矶 VPS 状态</strong></td>
+<td align="left">ICMP</td>
+<td align="left">实时监测机房连通性</td>
 </tr>
 <tr>
-<td><code>hexo-blog-source</code></td>
-<td>私有</td>
-<td>源代码（配置文件、Markdown 原文）</td>
+<td align="left"><strong>洛杉矶-Vless 梯子</strong></td>
+<td align="left">TCP 端口</td>
+<td align="left">精准监控代理服务，这是我的网络命脉</td>
+</tr>
+<tr>
+<td align="left"><strong>SSL 证书有效期</strong></td>
+<td align="left">HTTP(s) 深度扫描</td>
+<td align="left">直接在看板上显示证书倒计时（目前显示：有效 89 天）</td>
+</tr>
+<tr>
+<td align="left"><strong>lhy 个人博客</strong></td>
+<td align="left">HTTP(s)</td>
+<td align="left">跨平台监控托管在 GitHub Pages 上的 Hexo 站点，实时掌握全球响应延迟</td>
 </tr>
 </tbody></table>
-<h3 id="备份指令"><a href="#备份指令" class="headerlink" title="备份指令"></a>备份指令</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">git add .<br>git commit -m <span class="hljs-string">&quot;feat: 备份博客源代码，包含动态背景配置&quot;</span><br>git push -u origin main<br></code></pre></td></tr></table></figure>
-
-<hr>
-<h2 id="6-结语"><a href="#6-结语" class="headerlink" title="6. 结语"></a>6. 结语</h2><p>目前博客已成功上线：<a target="_blank" rel="noopener" href="https://blog.yushenchuanmei.top/">blog.yushenchuanmei.top</a></p>
-<p>接下来的重心将回归到 <strong>Java 学生管理系统</strong> 的学习开发，输出是最好的输入，共勉！</p>
-<hr>
 <blockquote>
-<p>📝 <strong>本文作者</strong>：sixiaopangai<br>🔗 <strong>博客地址</strong>：<a href="https://sixiaopangai.github.io/">https://sixiaopangai.github.io</a></p>
+<p><strong>运维心得</strong>：这种”四个绿条”并排运行的画面，不仅是视觉上的享受，更是代码逻辑转化为生产力的最好证明。</p>
 </blockquote>
+<hr>
+<h2 id="6-结语"><a href="#6-结语" class="headerlink" title="6. 结语"></a>6. 结语</h2><p>这次实践让我深刻理解了 <strong>“架构对称性”</strong>：</p>
+<ul>
+<li>本地终端发出指令</li>
+<li>云端容器执行任务</li>
+<li>域名系统分发流量</li>
+<li>即时通讯反馈状态</li>
+</ul>
+<p>这不仅是一篇技术笔记，更是一份作为 CS 学生的运维实战作业。</p>
 
                 
               </div>
@@ -390,15 +382,13 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/Hexo/" class="print-no-link">#Hexo</a>
+        <a href="/tags/VPS/" class="print-no-link">#VPS</a>
       
-        <a href="/tags/Blog/" class="print-no-link">#Blog</a>
+        <a href="/tags/%E8%BF%90%E7%BB%B4/" class="print-no-link">#运维</a>
       
-        <a href="/tags/Three-js/" class="print-no-link">#Three.js</a>
+        <a href="/tags/Docker/" class="print-no-link">#Docker</a>
       
-        <a href="/tags/GitHub-Pages/" class="print-no-link">#GitHub Pages</a>
-      
-        <a href="/tags/Cloudflare/" class="print-no-link">#Cloudflare</a>
+        <a href="/tags/Nginx/" class="print-no-link">#Nginx</a>
       
     </div>
   
@@ -410,8 +400,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>从零到一：在 Acer Predator 上搭建并部署 Hexo (Fluid) 动态博客</div>
-      <div>https://sixiaopangai.github.io/2026/01/05/Hexo-Fluid-Deployment-Guide/</div>
+      <div>从零到一：构建高可用的 VPS 运维与监控闭环全纪录</div>
+      <div>https://sixiaopangai.github.io/2026/01/08/vps-monitoring-setup/</div>
     </div>
     <div class="license-meta">
       
@@ -423,7 +413,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2026年1月5日</div>
+          <div>2026年1月8日</div>
         </div>
       
       
@@ -455,9 +445,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2026/01/08/vps-monitoring-setup/" title="从零到一：构建高可用的 VPS 运维与监控闭环全纪录">
+                      <a href="/2026/01/09/vps-proxy-setup-2026/" title="2026 全能自建梯子方案：VLESS-Reality、Hysteria2 与 IP 质量调优全纪录">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">从零到一：构建高可用的 VPS 运维与监控闭环全纪录</span>
+                        <span class="hidden-mobile">2026 全能自建梯子方案：VLESS-Reality、Hysteria2 与 IP 质量调优全纪录</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -465,8 +455,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2025/12/31/hello-world/" title="Hello World">
-                        <span class="hidden-mobile">Hello World</span>
+                      <a href="/2026/01/05/Hexo-Fluid-Deployment-Guide/" title="从零到一：在 Acer Predator 上搭建并部署 Hexo (Fluid) 动态博客">
+                        <span class="hidden-mobile">从零到一：在 Acer Predator 上搭建并部署 Hexo (Fluid) 动态博客</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
